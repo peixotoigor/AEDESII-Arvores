@@ -32,18 +32,18 @@
   pdfauthor={Igor Peixoto Rodrigues}
 }
 
-\setstretch{1.15}
+\setstretch{1.12}
 \setlength{\parindent}{1.0cm}
 \setlength{\parskip}{0pt}
 \setlist{nosep,leftmargin=0.8cm}
-\captionsetup{font=footnotesize,labelfont=bf,skip=3pt}
+\captionsetup{font=scriptsize,labelfont=bf,skip=2pt}
 
-\titlespacing*{\section}{0pt}{1.3ex plus .2ex minus .2ex}{0.6ex plus .1ex}
-\titlespacing*{\subsection}{0pt}{1.0ex plus .2ex minus .2ex}{0.4ex plus .1ex}
+\titlespacing*{\section}{0pt}{1.2ex plus .2ex minus .2ex}{0.5ex plus .1ex}
+\titlespacing*{\subsection}{0pt}{0.9ex plus .2ex minus .2ex}{0.3ex plus .1ex}
 
-\setlength{\floatsep}{6pt plus 2pt minus 2pt}
-\setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
-\setlength{\intextsep}{6pt plus 2pt minus 2pt}
+\setlength{\floatsep}{5pt plus 2pt minus 2pt}
+\setlength{\textfloatsep}{6pt plus 2pt minus 2pt}
+\setlength{\intextsep}{5pt plus 2pt minus 2pt}
 
 \definecolor{azulescuro}{RGB}{28,75,115}
 \definecolor{azulclaro}{RGB}{222,237,249}
@@ -153,7 +153,7 @@ A Tabela~\ref{tab:conceitos} sintetiza as distinções de organização estrutur
 
 \begin{table}[htbp]
 \centering
-\caption{Diferenças conceituais de ordenação, navegação e invariantes.}
+\caption{Diferenças conceituais de ordenação, mecanismos de navegação e invariantes estruturais fundamentais das árvores analisadas frente aos modelos clássicos BST e AVL.}
 \label{tab:conceitos}
 \scriptsize
 \begin{tabularx}{\linewidth}{>{\bfseries}l p{3.2cm} p{3.6cm} X}
@@ -368,7 +368,7 @@ A Figura~\ref{fig:trie_ev} demonstra o princípio do compartilhamento de prefixo
 \end{tikzpicture}
 \par\tiny Poda do ramo exclusivo 'l'.
 \end{minipage}
-\caption{Evolução topológica da Árvore Trie: compartilhamento e poda de prefixos.}
+\caption{Rastreamento evolutivo da Árvore Trie sobre alfabeto latino: (1) inserção dos termos ``sol'' e ``som'' compartilhando o prefixo comum ``so''; (2) expansão de ramo com a palavra ``soma''; e (3) remoção folha de ``sol'' podando o nó 'l' e preservando os nós do prefixo compartilhado pelas chaves remanescentes.}
 \label{fig:trie_ev}
 \end{figure}
 
@@ -416,7 +416,7 @@ A Figura~\ref{fig:patricia_ev} evidencia a compactação e cisão de arestas na 
 \end{tikzpicture}
 \par\tiny Recombinação compacta das arestas.
 \end{minipage}
-\caption{Rastreamento de cisão e fusão de arestas na Árvore Patricia.}
+\caption{Rastreamento de mutação estrutural na Árvore Patricia (Radix compactada): (1) estado inicial com aresta compactada ``so'' e folhas terminais; (2) inserção de ``sal'' provocando a cisão atômica da aresta no maior prefixo comum ($\mathrm{LCP}=\text{``s''}$) com novo nó bifurcador; e (3) remoção de ``sal'' com fusão reversa de arestas, restabelecendo o rótulo consolidado original.}
 \label{fig:patricia_ev}
 \end{figure}
 
@@ -460,7 +460,7 @@ A Figura~\ref{fig:splay_ev} detalha a cascata de rotações autoajustáveis dura
 \end{tikzpicture}
 \par\tiny Chave acessada ascende à raiz.
 \end{minipage}
-\caption{Rastreamento de autoajuste \textit{zig-zig} na Árvore Splay.}
+\caption{Rastreamento do passo autoajustável homogêneo (\textit{zig-zig}) na Árvore Splay: (1) acesso à chave profunda 20 com nós alinhados à esquerda ($x=20, p=30, g=50$); (2) primeira rotação à direita aplicada sobre o avô $g$; e (3) segunda rotação à direita sobre o pai $p$, promovendo a chave consultada à raiz e reduzindo pela metade a profundidade de todos os nós do caminho de busca.}
 \label{fig:splay_ev}
 \end{figure}
 
@@ -500,7 +500,7 @@ A Figura~\ref{fig:treap_ev} ilustra a manutenção simultânea da ordem de BST e
 \end{tikzpicture}
 \par\tiny Rotações promovem menor prioridade.
 \end{minipage}
-\caption{Inserção e rebalanceamento via min-heap na Árvore Treap.}
+\caption{Rastreamento de inserção e rebalanceamento via min-heap na Árvore Treap: (1) estado inicial perfeitamente balanceado obedecendo à ordem simétrica e ao min-heap; (2) inserção em folha da chave 50 com prioridade estocástica de alta precedência ($p=10$), violando o min-heap frente ao pai ($p=25$); e (3) rotações ascendentes à esquerda que promovem $50/10$ à raiz, restaurando simultaneamente ambas as invariantes.}
 \label{fig:treap_ev}
 \end{figure}
 
@@ -551,7 +551,7 @@ A Figura~\ref{fig:kdtree_ev} correlaciona a hierarquia dos nós na KD-Tree com o
 \end{tikzpicture}
 \par\tiny Hiperplano ortogonal confinado à região.
 \end{minipage}
-\caption{Rastreamento hierárquico e particionamento espacial na KD-Tree.}
+\caption{Rastreamento de particionamento e hierarquia espacial bidimensional ($k=2$) na KD-Tree: (1) hierarquia da árvore com alternância cíclica de eixos de corte ($x$ na profundidade par, $y$ na ímpar); (2) subdivisão do plano euclidiano antes de $E$; e (3) inserção do ponto $E(7.5, 2.0)$ delimitando um novo hiperplano ortogonal restrito à sub-região de seus ancestrais.}
 \label{fig:kdtree_ev}
 \end{figure}
 
@@ -561,7 +561,7 @@ Para fundamentar as características computacionais das cinco estruturas estudad
 
 \begin{table}[htbp]
 \centering
-\caption{Comparação assintótica de operações fundamentais e complexidade espacial.}
+\caption{Comparação formal de complexidade assintótica de tempo (pior caso, caso médio e amortizado) e espaço entre as cinco estruturas especializadas e as referências BST e AVL.}
 \label{tab:complexidade}
 \scriptsize
 \setlength{\tabcolsep}{2.5pt}
@@ -609,37 +609,45 @@ Os experimentos foram segmentados em quatro cenários específicos de avaliaçã
 
 \subsection{Resultados e Discussão Comparativa}
 
-Os resultados empíricos consolidados das baterias de testes em C++20 são sintetizados na Tabela~\ref{tab:benchmarks}. O comportamento visual e a progressão das métricas ao longo dos diferentes parâmetros de teste encontram-se ilustrados nas Figuras~\ref{fig:bench12} e~\ref{fig:bench34}.
+Os resultados empíricos consolidados das baterias de testes em C++20 são sintetizados na Tabela~\ref{tab:benchmarks}. O comportamento visual e a progressão temporal e espacial das métricas ao longo dos parâmetros avaliados encontram-se ilustrados graficamente nas Figuras~\ref{fig:bench12}, \ref{fig:bench34}, \ref{fig:bench_splay} e~\ref{fig:bench_kdtree}.
 
 \begin{table}[htbp]
 \centering
-\caption{Resultados experimentais consolidados nos cenários de avaliação de desempenho.}
+\caption{Resultados experimentais consolidados nos quatro cenários de avaliação de desempenho em C++20.}
 \label{tab:benchmarks}
 \scriptsize
-\setlength{\tabcolsep}{2.5pt}
-\begin{tabularx}{\linewidth}{>{\bfseries}p{2.3cm} l *{5}{>{\centering\arraybackslash}X}}
+\setlength{\tabcolsep}{3.5pt}
+\renewcommand{\arraystretch}{1.03}
+\begin{tabularx}{\linewidth}{l c c >{\raggedright\arraybackslash}X}
 \toprule
-Cenário / Teste & Métrica Avaliada & Trie & Patricia & Splay & Treap & AVL \\
+Estrutura Avaliada & Métrica Primária & Métrica Secundária & Observação e Comportamento Empírico \\
 \midrule
-\multirow{2}{*}{\parbox{2.2cm}{Prefixos Comuns \\ ($n=50.000$)}} 
-& Tempo Busca ($\mu$s/chave) & 0.51 & \textbf{0.49} & --- & --- & 0.18 \\
-& Quantidade de Nós & 476.768 & \textbf{62.732} & --- & --- & 50.000 \\
+\multicolumn{4}{l}{\textbf{Cenário 1: Vocabulário com Prefixos Compartilhados ($n=50.000$, $L \le 100$)}} \\
 \midrule
-\multirow{3}{*}{\parbox{2.2cm}{Inserção Ordenada \\ ($n=20.000$)}} 
-& Tempo Inserção (ms) & --- & --- & \textbf{0.50} & 1.12 & 1.55 \\
-& Altura Final & --- & --- & 20.000$^*$ & 34 & \textbf{15} \\
-& Busca 2000 Chaves (ms) & --- & --- & 0.91 & 0.31 & \textbf{0.30} \\
+Trie & 0,51 $\mu$s/chave & 476.768 nós & Custo $\Ogrande{L}$ por caractere; sobrecarga de alocação em nós univalentes. \\
+\textbf{Patricia} & \textbf{0,49 $\mu$s/chave} & \textbf{62.732 nós} & Compactação reduz nós em 86,8\% e acelera busca por menos saltos de ponteiro. \\
+AVL (referência) & 0,18 $\mu$s/chave & 50.000 nós & Rápida para chaves isoladas, mas escala com $\Ogrande{L \log n}$ para strings longas. \\
 \midrule
-\multirow{2}{*}{\parbox{2.2cm}{Acessos Zipf \\ ($n=50.000$)}} 
-& Latência Zipf ($\mu$s) & --- & --- & 0.80 & 0.60 & \textbf{0.36} \\
-& Latência Uniforme ($\mu$s) & --- & --- & 1.02 & 0.62 & 0.40 \\
+\multicolumn{4}{l}{\textbf{Cenário 2: Inserção Ordenada Monotônica Patológica ($n=20.000$ inteiros)}} \\
 \midrule
-\multirow{2}{*}{\parbox{2.2cm}{Busca $k$-NN \\ ($n=50.000$)}} 
-& Tempo 2D ($\mu$s) & \multicolumn{5}{c}{\textbf{KD-Tree: 1.87 $\mu$s} \quad vs \quad Busca Linear: 170.4 $\mu$s (Ganho 91.1$\times$, 0.04\% nós)} \\
-& Tempo 15D ($\mu$s) & \multicolumn{5}{c}{KD-Tree: 1584.6 $\mu$s \quad vs \quad \textbf{Busca Linear: 396.5 $\mu$s} (Linear 4.0$\times$ mais rápida)} \\
+BST & 452,2 ms (ins.) & Altura 20.000 & Degeneração linear patológica $\Ogrande{n}$; 89,1 ms em 2k buscas (custo $\Ogrande{n^2}$). \\
+\textbf{AVL} & 1,55 ms (ins.) & \textbf{Altura 15} & Rebalanceamento rígido garante altura estritamente mínima ($\le 1,44\log_2 n$). \\
+Treap & 1,12 ms (ins.) & Altura 34 & Prioridades pseudoaleatórias imunes à ordenação; 0,31 ms em buscas. \\
+Splay & \textbf{0,50 ms (ins.)} & Altura 20.000$^*$ & Inserção na raiz veloz; buscas posteriores reequilibram a árvore via splaying. \\
+\midrule
+\multicolumn{4}{l}{\textbf{Cenário 3: Localidade Temporal de Acesso ($n=50.000$ consultas sob carga Zipf vs Uniforme)}} \\
+\midrule
+\textbf{Splay} & 1,02 $\mu$s (unif.) & \textbf{0,80 $\mu$s (Zipf)} & Autoajuste promove chaves populares à raiz; ganho de 21,4\% em latência. \\
+Treap & 0,62 $\mu$s (unif.) & 0,60 $\mu$s (Zipf) & Desempenho estocástico estável e indiferente ao viés de consulta. \\
+AVL & \textbf{0,40 $\mu$s (unif.)} & \textbf{0,36 $\mu$s (Zipf)} & Menor latência absoluta sustentada pelo equilíbrio estrito de altura. \\
+\midrule
+\multicolumn{4}{l}{\textbf{Cenário 4: Busca de Vizinho Mais Próximo $k$-NN ($n=50.000$ pontos vs Busca Linear)}} \\
+\midrule
+\textbf{KD-Tree (2D)} & \textbf{1,87 $\mu$s} (0,04\% nós) & Linear: 170,4 $\mu$s & \textbf{Aceleração de 91,1$\times$}; poda ortogonal euclidiana altamente eficiente. \\
+KD-Tree (15D) & 1584,6 $\mu$s (90,7\% nós) & \textbf{Linear: 396,5 $\mu$s} & \textbf{Busca linear 4,0$\times$ mais rápida}; colapso da poda por maldição da dimensão. \\
 \bottomrule
 \end{tabularx}
-\par\vspace{2pt}{\raggedright\tiny $^*$Na Splay sob inserção puramente sequencial, a árvore assume topologia linear instantânea, mas as operações amortizadas de busca subsequentes restabelecem o equilíbrio operacional.\par}
+\par\vspace{2pt}{\raggedright\tiny $^*$Sob inserção puramente ordenada, a Splay forma topologia linear instantânea no ato da inserção, mas as operações amortizadas de busca subsequentes restabelecem o equilíbrio operacional.\par}
 \end{table}
 
 \begin{figure}[htbp]
@@ -647,13 +655,13 @@ Cenário / Teste & Métrica Avaliada & Trie & Patricia & Splay & Treap & AVL \\
 \begin{minipage}[t]{0.49\linewidth}
   \centering
   \includegraphics[width=\linewidth]{imagens/cenario1_prefixos.png}
-  \caption{Cenário 1: Desempenho e compressão na Trie vs Patricia.}
+  \caption{Cenário 1: Tempo de busca e pegada de memória entre Trie e Patricia ($n \in [10^3, 10^5]$). A compactação de arestas da Patricia reduz os nós em 86,8\% mantendo a latência $\Ogrande{L}$ independente de $n$.}
   \label{fig:bench12}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.49\linewidth}
   \centering
   \includegraphics[width=\linewidth]{imagens/cenario2_altura_ordenada.png}
-  \caption{Cenário 2: Degeneração da BST vs estabilidade AVL/Treap.}
+  \caption{Cenário 2: Altura máxima e tempo sob inserção ordenada ($n \in [10^3, 2\times 10^4]$). A BST degenera linearmente ($\text{altura}=n$), enquanto AVL ($\le 15$) e Treap ($\le 34$) sustentam controle logarítmico.}
   \label{fig:bench34}
 \end{minipage}
 \end{figure}
@@ -663,23 +671,23 @@ Cenário / Teste & Métrica Avaliada & Trie & Patricia & Splay & Treap & AVL \\
 \begin{minipage}[t]{0.49\linewidth}
   \centering
   \includegraphics[width=\linewidth]{imagens/cenario3_localidade_splay.png}
-  \caption{Cenário 3: Latência total sob carga Zipf vs Uniforme.}
+  \caption{Cenário 3: Latência total sob carga Zipf vs uniforme ($n=50.000$). O autoajuste da Árvore Splay promove chaves frequentes para a raiz, reduzindo o tempo de consulta em 21,4\% sob alta localidade temporal.}
   \label{fig:bench_splay}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.49\linewidth}
   \centering
   \includegraphics[width=\linewidth]{imagens/cenario4_maldicao_kdtree.png}
-  \caption{Cenário 4: Maldição da dimensionalidade na KD-Tree.}
+  \caption{Cenário 4: Tempo de consulta $k$-NN e nós visitados vs dimensão ($k \in [2, 20]$). A KD-Tree é 91,1$\times$ superior em 2D, mas a perda de poda em altas dimensões ($k \ge 15$) torna a busca linear 4,0$\times$ mais rápida.}
   \label{fig:bench_kdtree}
 \end{minipage}
 \end{figure}
 
 A convergência entre as observações experimentais e as previsões teóricas confirma com clareza as propriedades fundamentais de cada estrutura:
 \begin{enumerate}[leftmargin=*]
-  \item \textbf{Eficiência da Compactação da Patricia:} No Cenário 1, para $n=50.000$ strings com prefixos compartilhados, a Patricia exigiu apenas 62.732 nós frente a 476.768 nós da Trie padrão, uma redução estrutural de 86,8\% alcançada pela eliminação de cadeias univalentes intermediárias. Essa compactação acelerou as buscas de 0.51 $\mu$s para 0.49 $\mu$s por chave devido à redução de indireções de ponteiro.
-  \item \textbf{Robustez da Treap e Degradação da BST:} No Cenário 2, sob inserções estritamente ordenadas de $n=20.000$ inteiros, a BST ordinária degenerou completamente em uma lista de altura 20.000, demandando 452.2 ms para inserção acumulada ($\Ogrande{n^2}$) e 89.1 ms para 2000 buscas. A AVL preservou rigorosamente altura 15 (inserção em 1.55 ms e busca em 0.30 ms), enquanto a Treap, graças às prioridades aleatórias da invariante de min-heap, limitou sua altura a 34 níveis com inserção em 1.12 ms, demonstrando que o balanceamento estocástico é imune a padrões patológicos determinísticos de inserção.
-  \item \textbf{Adaptação da Splay sob Localidade Temporal:} No Cenário 3, a Splay reduziu seu tempo total de execução de 101.97 ms (distribuição uniforme) para 80.15 ms sob carga de Zipf (ganho de 21,4\%), confirmando que as rotações de splaying promovem os elementos mais requisitados para proximidade da raiz, barateando acessos subsequentes sem metadados explícitos de altura.
-  \item \textbf{A Maldição da Dimensionalidade na KD-Tree:} No Cenário 4, para $k=2$ dimensões com $n=50.000$ pontos, a KD-Tree alcançou velocidade 91.1 vezes superior à busca linear (1.87 $\mu$s vs 170.4 $\mu$s), inspecionando apenas 0.04\% dos nós. Entretanto, conforme a dimensão espacial cresceu para $k \ge 15$, o percentual de nós inspecionados subiu drasticamente para 90,7\% ($k=15$) e 99,6\% ($k=20$), fazendo com que a busca linear contígua em vetor (396.5 $\mu$s) superasse a KD-Tree (1584.6 $\mu$s) em 4.0 vezes, decorrente da penalidade de saltos de cache em ponteiros na árvore quando a poda euclidiana torna-se inoperante.
+  \item \textbf{Eficiência da Compactação da Patricia (Figura~\ref{fig:bench12}):} No Cenário 1, conforme ilustrado na Figura~\ref{fig:bench12}, para $n=50.000$ strings com prefixos compartilhados, a Patricia exigiu apenas 62.732 nós frente a 476.768 nós da Trie padrão, uma redução estrutural de 86,8\% alcançada pela eliminação de cadeias univalentes intermediárias. Essa compactação acelerou as buscas de 0,51 $\mu$s para 0,49 $\mu$s por chave devido à redução de indireções de ponteiro.
+  \item \textbf{Robustez da Treap e Degradação da BST (Figura~\ref{fig:bench34}):} No Cenário 2, detalhado na Figura~\ref{fig:bench34}, sob inserções estritamente ordenadas de $n=20.000$ inteiros, a BST ordinária degenerou completamente em uma lista de altura 20.000, demandando 452,2 ms para inserção acumulada ($\Ogrande{n^2}$) e 89,1 ms para 2000 buscas. A AVL preservou rigorosamente altura 15 (inserção em 1,55 ms e busca em 0,30 ms), enquanto a Treap, graças às prioridades aleatórias da invariante de min-heap, limitou sua altura a 34 níveis com inserção em 1,12 ms, demonstrando que o balanceamento estocástico é imune a padrões patológicos determinísticos de inserção.
+  \item \textbf{Adaptação da Splay sob Localidade Temporal (Figura~\ref{fig:bench_splay}):} No Cenário 3, corroborado pela Figura~\ref{fig:bench_splay}, a Splay reduziu seu tempo total de execução de 101,97 ms (distribuição uniforme) para 80,15 ms sob carga de Zipf (ganho de 21,4\%), confirmando que as rotações de splaying promovem os elementos mais requisitados para proximidade da raiz, barateando acessos subsequentes sem metadados explícitos de altura.
+  \item \textbf{A Maldição da Dimensionalidade na KD-Tree (Figura~\ref{fig:bench_kdtree}):} No Cenário 4, evidenciado na Figura~\ref{fig:bench_kdtree}, para $k=2$ dimensões com $n=50.000$ pontos, a KD-Tree alcançou velocidade 91,1 vezes superior à busca linear (1,87 $\mu$s vs 170,4 $\mu$s), inspecionando apenas 0,04\% dos nós. Entretanto, conforme a dimensão espacial cresceu para $k \ge 15$, o percentual de nós inspecionados subiu drasticamente para 90,7\% ($k=15$) e 99,6\% ($k=20$), fazendo com que a busca linear contígua em vetor (396,5 $\mu$s) superasse a KD-Tree (1584,6 $\mu$s) em 4,0 vezes, decorrente da penalidade de saltos de cache em ponteiros na árvore quando a poda euclidiana torna-se inoperante.
 \end{enumerate}
 
 \section{Aplicações, Análise Crítica e Discussão}
@@ -708,7 +716,7 @@ A Tabela~\ref{tab:decisao} sintetiza as recomendações objetivas para escolha d
 
 \begin{table}[htbp]
 \centering
-\caption{Diretrizes de seleção de estruturas de dados hierárquicas.}
+\caption{Diretrizes de seleção e matriz de decisão técnica para engenharia de software de alta performance.}
 \label{tab:decisao}
 \scriptsize
 \renewcommand{\arraystretch}{0.92}
@@ -733,7 +741,7 @@ O presente estudo permitiu modelar, implementar e confrontar empiricamente cinco
 
 \begin{enumerate}[leftmargin=*]
   \item \textbf{Diferenças estruturais primárias:} Enquanto BST e AVL baseiam-se na comparação atômica de chaves completas, Trie e Patricia exploram a decomposição em símbolos; Splay e Treap preservam a ordenação simétrica introduzindo autoajuste amortizado e balanceamento estocástico, respectivamente; e a KD-Tree emprega cortes ortogonais ciclicamente alternados no espaço euclidiano.
-  \item \textbf{Liderança de desempenho por cenário:} A Árvore Patricia demonstrou inequívoca superioridade em processamento de strings com prefixos compartilhados (alocando 86,8\% menos nós que a Trie convencional e superando-a em tempo de busca por nó). A Árvore Splay revelou-se altamente adaptativa para padrões de consulta com forte localidade temporal de referência, reduzindo o tempo de consulta em 21,4\% sob distribuição de Zipf frente à carga uniforme. A KD-Tree provou-se imbatível em consultas espaciais de vizinhança em baixa dimensão, superando a varredura linear por 91,1 vezes em $\mathbb{R}^2$.
+  \item \textbf{Liderança de desempenho por cenário:} A Árvore Patricia demonstrou superioridade consistente de desempenho e consumo de nós em processamento de strings com prefixos compartilhados (alocando 86,8\% menos nós que a Trie convencional e superando-a em tempo de busca por nó). A Árvore Splay revelou-se altamente adaptativa para padrões de consulta com forte localidade temporal de referência, reduzindo o tempo de consulta em 21,4\% sob distribuição de Zipf frente à carga uniforme. A KD-Tree demonstrou expressiva vantagem de desempenho em consultas espaciais de vizinhança em baixa dimensão, superando a varredura linear por 91,1 vezes em $\mathbb{R}^2$.
   \item \textbf{Coerência empírico-assintótica:} Os ensaios computacionais convergiram rigorosamente com as classes de complexidade descritas na literatura. Observou-se a degeneração linear $\Ogrande{n}$ da BST sob entradas ordenadas, o controle estrito de altura da AVL, a estabilidade logarítmica probabilística da Treap e o efeito da maldição da dimensionalidade na KD-Tree em dimensões elevadas ($k=15$).
   \item \textbf{Dificuldades de implementação:} As estruturas de maior complexidade de desenvolvimento foram a Árvore Patricia (devido à lógica de divisão e fusão de arestas) e a KD-Tree (em razão da alternância multidimensional e da manutenção das podas euclidianas). As árvores Splay e Treap exigiram atenção redobrada na invariância das rotações binárias.
   \item \textbf{Cenários de adequação recomendada:} A Trie e a Patricia são soberanas em autocompletar, indexação de strings e roteamento IP; a Splay é recomendada para arquiteturas de caching e buffers; a Treap é excelente para conjuntos ordenados dinâmicos com divisão e união; e a KD-Tree é a escolha mandatória para bancos de dados geográficos, visão computacional e física de jogos.
