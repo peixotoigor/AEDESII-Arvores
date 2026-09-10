@@ -151,6 +151,24 @@ public:
     KDTree(const KDTree&) = delete;
     KDTree& operator=(const KDTree&) = delete;
 
+    KDTree(KDTree&& other) noexcept
+        : raiz(other.raiz), kDim(other.kDim), totalPontos(other.totalPontos) {
+        other.raiz = nullptr;
+        other.totalPontos = 0;
+    }
+
+    KDTree& operator=(KDTree&& other) noexcept {
+        if (this != &other) {
+            delete raiz;
+            raiz = other.raiz;
+            kDim = other.kDim;
+            totalPontos = other.totalPontos;
+            other.raiz = nullptr;
+            other.totalPontos = 0;
+        }
+        return *this;
+    }
+
     void construirBalanceada(std::vector<Ponto> pontos) {
         delete raiz;
         raiz = nullptr;

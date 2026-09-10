@@ -162,6 +162,25 @@ public:
     Treap(const Treap&) = delete;
     Treap& operator=(const Treap&) = delete;
 
+    Treap(Treap&& other) noexcept
+        : raiz(other.raiz), totalElementos(other.totalElementos), rng(other.rng), dist(other.dist) {
+        other.raiz = nullptr;
+        other.totalElementos = 0;
+    }
+
+    Treap& operator=(Treap&& other) noexcept {
+        if (this != &other) {
+            limpar();
+            raiz = other.raiz;
+            totalElementos = other.totalElementos;
+            rng = other.rng;
+            dist = other.dist;
+            other.raiz = nullptr;
+            other.totalElementos = 0;
+        }
+        return *this;
+    }
+
     bool inserir(int chave, int prioridade = -1) {
         if (prioridade == -1) {
             prioridade = dist(rng);

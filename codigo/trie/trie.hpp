@@ -78,8 +78,22 @@ public:
 
     Trie(const Trie&) = delete;
     Trie& operator=(const Trie&) = delete;
-    Trie(Trie&&) noexcept = default;
-    Trie& operator=(Trie&&) noexcept = default;
+
+    Trie(Trie&& other) noexcept : raiz(other.raiz), totalChaves(other.totalChaves) {
+        other.raiz = nullptr;
+        other.totalChaves = 0;
+    }
+
+    Trie& operator=(Trie&& other) noexcept {
+        if (this != &other) {
+            delete raiz;
+            raiz = other.raiz;
+            totalChaves = other.totalChaves;
+            other.raiz = nullptr;
+            other.totalChaves = 0;
+        }
+        return *this;
+    }
 
     void inserir(const std::string& chave) {
         if (chave.empty()) {

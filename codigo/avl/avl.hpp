@@ -125,6 +125,23 @@ public:
     AVL(const AVL&) = delete;
     AVL& operator=(const AVL&) = delete;
 
+    AVL(AVL&& other) noexcept
+        : raiz(other.raiz), totalElementos(other.totalElementos) {
+        other.raiz = nullptr;
+        other.totalElementos = 0;
+    }
+
+    AVL& operator=(AVL&& other) noexcept {
+        if (this != &other) {
+            limpar();
+            raiz = other.raiz;
+            totalElementos = other.totalElementos;
+            other.raiz = nullptr;
+            other.totalElementos = 0;
+        }
+        return *this;
+    }
+
     void inserir(const Key& chave) {
         raiz = inserirRecursivo(raiz, chave);
     }

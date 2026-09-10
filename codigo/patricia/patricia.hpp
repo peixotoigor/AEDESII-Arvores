@@ -151,8 +151,22 @@ public:
 
     Patricia(const Patricia&) = delete;
     Patricia& operator=(const Patricia&) = delete;
-    Patricia(Patricia&&) noexcept = default;
-    Patricia& operator=(Patricia&&) noexcept = default;
+
+    Patricia(Patricia&& other) noexcept : raiz(other.raiz), totalChaves(other.totalChaves) {
+        other.raiz = nullptr;
+        other.totalChaves = 0;
+    }
+
+    Patricia& operator=(Patricia&& other) noexcept {
+        if (this != &other) {
+            delete raiz;
+            raiz = other.raiz;
+            totalChaves = other.totalChaves;
+            other.raiz = nullptr;
+            other.totalChaves = 0;
+        }
+        return *this;
+    }
 
     void inserir(const std::string& chave) {
         inserirRecursivo(raiz, chave);

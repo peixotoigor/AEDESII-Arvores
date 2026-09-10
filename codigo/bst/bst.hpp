@@ -46,6 +46,23 @@ public:
     BST(const BST&) = delete;
     BST& operator=(const BST&) = delete;
 
+    BST(BST&& other) noexcept
+        : raiz(other.raiz), totalElementos(other.totalElementos) {
+        other.raiz = nullptr;
+        other.totalElementos = 0;
+    }
+
+    BST& operator=(BST&& other) noexcept {
+        if (this != &other) {
+            limpar();
+            raiz = other.raiz;
+            totalElementos = other.totalElementos;
+            other.raiz = nullptr;
+            other.totalElementos = 0;
+        }
+        return *this;
+    }
+
     void inserir(const Key& chave) {
         if (!raiz) {
             raiz = new No(chave);

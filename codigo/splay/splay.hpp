@@ -114,6 +114,26 @@ public:
     SplayTree(const SplayTree&) = delete;
     SplayTree& operator=(const SplayTree&) = delete;
 
+    SplayTree(SplayTree&& other) noexcept
+        : raiz(other.raiz), totalElementos(other.totalElementos), contagemRotacoes(other.contagemRotacoes) {
+        other.raiz = nullptr;
+        other.totalElementos = 0;
+        other.contagemRotacoes = 0;
+    }
+
+    SplayTree& operator=(SplayTree&& other) noexcept {
+        if (this != &other) {
+            limpar();
+            raiz = other.raiz;
+            totalElementos = other.totalElementos;
+            contagemRotacoes = other.contagemRotacoes;
+            other.raiz = nullptr;
+            other.totalElementos = 0;
+            other.contagemRotacoes = 0;
+        }
+        return *this;
+    }
+
     void inserir(int chave) {
         if (!raiz) {
             raiz = new No(chave);

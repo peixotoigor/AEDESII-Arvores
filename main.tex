@@ -125,7 +125,7 @@ Este relatório técnico apresenta um estudo teórico, algorítmico e comparativ
 
 \vspace{0.25cm}
 
-\section{Introdução e Fundamentação Teórica}
+\section{Introdução e Motivação}
 
 Estruturas em árvore desempenham papel central na computação ao organizar conjuntos dinâmicos de dados em hierarquias que reduzem drasticamente o espaço de busca. Em uma Árvore Binária de Busca (BST) convencional, a ordenação total entre chaves define que elementos estritamente menores que a raiz ocupem sua subárvore esquerda e elementos maiores ocupem a subárvore direita. Embora elegante, a BST é vulnerável à ordem de inserção: sequências monotonicamente ordenadas degradam sua altura para $\Ogrande{n}$, convertendo buscas em varreduras lineares. Para contornar essa patologia, a Árvore AVL introduz uma invariante estrita de altura: o fator de balanceamento de qualquer nó ($\Delta h = h_{\text{dir}} - h_{\text{esq}}$) deve pertencer ao conjunto $\{-1, 0, +1\}$. Violações dessa condição desencadeiam rotações locais (simples ou duplas), garantindo altura estritamente logarítmica $\Ogrande{\log n}$ no pior caso ao custo de armazenar e atualizar metadados de altura a cada mutação \cite{cormen2022}.
 
@@ -171,9 +171,9 @@ KD-Tree & Coordenada na dimensão atual & Particionamento ortogonal cíclico & R
 \end{tabularx}
 \end{table}
 
-\section{Projeto e Implementação das Estruturas}
+\section{Fundamentação Teórica das Estruturas}
 
-As estruturas foram projetadas e implementadas em C++20, encapsulando ponteiros e aplicando o princípio RAII com gerenciamento explícito de memória via destrutores recursivos.
+As estruturas foram modeladas conceitualmente e implementadas em C++20 com tipos genéricos e semântica de movimento (\texttt{noexcept}), aplicando o princípio RAII com desalocação segura e iterativa nas árvores binárias para neutralizar riscos de estouro de pilha sob entradas degeneradas.
 
 \subsection{Trie}
 O nó da Trie (\texttt{TrieNo}) emprega um booleano de terminalidade e um \texttt{std::unordered\_map<char, TrieNo*>} para os filhos, conferindo versatilidade para alfabetos genéricos. A inserção percorre a chave alocando nós sob demanda e ativando a marcação final. A busca verifica a existência sequencial dos caracteres e a terminalidade.
@@ -314,7 +314,7 @@ void kNN(KDNo* no, const std::vector<double>& q, int prof, int k, KDNo*& melhor,
 }
 \end{lstlisting}
 
-\section{Demonstração e Rastreamento Visual}
+\section{Demonstração Visual dos Algoritmos}
 
 Nesta seção apresentam-se as representações gráficas evolutivas das cinco estruturas implementadas, contemplando o estado inicial, a transformação estrutural operada e a configuração final após mutação.
 
@@ -733,7 +733,7 @@ O presente estudo permitiu modelar, implementar e confrontar empiricamente cinco
 
 \begin{enumerate}[leftmargin=*]
   \item \textbf{Diferenças estruturais primárias:} Enquanto BST e AVL baseiam-se na comparação atômica de chaves completas, Trie e Patricia exploram a decomposição em símbolos; Splay e Treap preservam a ordenação simétrica introduzindo autoajuste amortizado e balanceamento estocástico, respectivamente; e a KD-Tree emprega cortes ortogonais ciclicamente alternados no espaço euclidiano.
-  \item \textbf{Liderança de desempenho por cenário:} A Árvore Patricia demonstrou inequívoca superioridade em processamento de strings com prefixos compartilhados (tempo de busca 6.4 vezes inferior à AVL e memória 70,8\% menor que a Trie). A Árvore Splay revelou-se a mais veloz para padrões de consulta com forte localidade temporal de referência (2.1 vezes mais rápida que a AVL). A KD-Tree provou-se imbatível em consultas espaciais de vizinhança em baixa dimensão, superando a varredura linear por até 141 vezes em $\mathbb{R}^2$.
+  \item \textbf{Liderança de desempenho por cenário:} A Árvore Patricia demonstrou inequívoca superioridade em processamento de strings com prefixos compartilhados (alocando 86,8\% menos nós que a Trie convencional e superando-a em tempo de busca por nó). A Árvore Splay revelou-se altamente adaptativa para padrões de consulta com forte localidade temporal de referência, reduzindo o tempo de consulta em 21,4\% sob distribuição de Zipf frente à carga uniforme. A KD-Tree provou-se imbatível em consultas espaciais de vizinhança em baixa dimensão, superando a varredura linear por 91,1 vezes em $\mathbb{R}^2$.
   \item \textbf{Coerência empírico-assintótica:} Os ensaios computacionais convergiram rigorosamente com as classes de complexidade descritas na literatura. Observou-se a degeneração linear $\Ogrande{n}$ da BST sob entradas ordenadas, o controle estrito de altura da AVL, a estabilidade logarítmica probabilística da Treap e o efeito da maldição da dimensionalidade na KD-Tree em dimensões elevadas ($k=15$).
   \item \textbf{Dificuldades de implementação:} As estruturas de maior complexidade de desenvolvimento foram a Árvore Patricia (devido à lógica de divisão e fusão de arestas) e a KD-Tree (em razão da alternância multidimensional e da manutenção das podas euclidianas). As árvores Splay e Treap exigiram atenção redobrada na invariância das rotações binárias.
   \item \textbf{Cenários de adequação recomendada:} A Trie e a Patricia são soberanas em autocompletar, indexação de strings e roteamento IP; a Splay é recomendada para arquiteturas de caching e buffers; a Treap é excelente para conjuntos ordenados dinâmicos com divisão e união; e a KD-Tree é a escolha mandatória para bancos de dados geográficos, visão computacional e física de jogos.
