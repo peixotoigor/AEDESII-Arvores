@@ -1,0 +1,7 @@
+Distribuicao,Estrutura,TempoTotalMs,LatenciaMediaUs
+Zipf (Localidade),Splay,80.1522,0.801522
+Zipf (Localidade),AVL,36.4378,0.364378
+Zipf (Localidade),Treap,59.8354,0.598354
+Uniforme,Splay,101.971,1.01971
+Uniforme,AVL,40.3429,0.403429
+Uniforme,Treap,62.2457,0.622457
