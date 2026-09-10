@@ -596,7 +596,7 @@ A análise teórica revela distinções profundas entre as classes de complexida
 
 \section{Metodologia Experimental e Resultados}
 
-Para verificar o comportamento prático das estruturas e validar as previsões assintóticas, definiu-se um protocolo experimental automatizado em C++20. O ambiente de testes baseou-se em compilador \texttt{g++ 13.3} com flags de otimização estritas (\texttt{-O3 -march=native}) sob arquitetura x86-64. Para cada ensaio, computou-se a média aritmética truncada após 10 repetições independentes antecedidas por fase de aquecimento de cache (\textit{warm-up}).
+Para verificar o comportamento empírico das estruturas e validar as previsões assintóticas, definiu-se um protocolo experimental automatizado em C++20. O ambiente de testes foi padronizado sob processador Intel Core i7-13620H (10 núcleos/16 threads, cache L1d de 384~KiB, L2 de 10~MiB e L3 compartilhado de 24~MiB), 24~GB de RAM DDR5 e sistema operacional Ubuntu Linux 24.04 LTS (kernel 6.6 x86-64). O código foi compilado via \texttt{g++ 13.3.0} com padrão \texttt{-std=c++20} e otimização agressiva \texttt{-O3 -march=native}. Para assegurar que o compilador não eliminasse laços de busca como código morto (\textit{dead-code elimination}), empregou-se uma barreira explícita de compilador via montagem inline (\textit{inline assembly} \texttt{asm volatile}). As cronometragens foram computadas via \texttt{std::chrono::high\_resolution\_clock}. Para mitigar ruídos térmicos e de escalonamento, cada ensaio foi precedido por uma rodada de aquecimento de cache (\textit{warm-up}) e executado por 10 repetições independentes, reportando-se a média aritmética.
 
 \subsection{Protocolo Experimental}
 Os experimentos foram segmentados em quatro cenários específicos de avaliação:
