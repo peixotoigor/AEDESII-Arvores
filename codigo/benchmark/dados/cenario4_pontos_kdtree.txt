@@ -1,0 +1,38 @@
+# CONJUNTO DE DADOS DE TESTE - ARVORE KD-TREE BIDIMENSIONAL (k=2)
+# Pontos para teste de particionamento no plano R^2
+
+[PONTOS_INICIAIS_2D]
+# Conforme Figura 5(2): cortes ortogonais delimitados por ancestrais
+# Formato: coord_x coord_y  (Rotulo no artigo)
+5.0 5.7  # Ponto A (corte x=5.0)
+2.3 3.0  # Ponto B (corte y=3.0)
+7.4 4.5  # Ponto C (corte y=4.5)
+3.6 1.4  # Ponto D (corte x=3.6)
+
+[PONTO_CONFINADO]
+# Conforme Figura 5(3): novo corte de E(7.5, 2.0) restrito a regiao inferior direita
+7.5 2.0  # Ponto E
+
+[BUSCAR_EXATO]
+5.0 5.7  # A (existe)
+7.5 2.0  # E (existe)
+0.0 0.0  # Inexistente
+
+[RANGE_QUERY]
+# Consulta por regiao retangular: min_x min_y max_x max_y
+# Caixa [2.0, 6.0] x [1.0, 6.0] -> contem 3 pontos: B(2.3, 3.0), D(3.6, 1.4) e A(5.0, 5.7)
+2.0 1.0 6.0 6.0
+
+[1NN_CONSULTA]
+# Ponto de consulta Q=(7.4, 4.4)
+# Vizinho mais proximo no artigo: C(7.4, 4.5), distancia euclidiana = 0.1
+7.4 4.4
+
+[PONTOS_CONSTRUCAO_BALANCEADA]
+# Conjunto de teste para construcao balanceada via mediana
+2.0 3.0
+5.0 4.0
+9.0 6.0
+4.0 7.0
+8.0 1.0
+7.0 2.0

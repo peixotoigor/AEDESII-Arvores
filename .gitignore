@@ -1,4 +1,37 @@
-# LaTeX auxiliary files
+# ----------------------------------------------------
+# Regra padrao: ignora tudo na raiz do repositorio
+# ----------------------------------------------------
+/*
+
+# ----------------------------------------------------
+# Excecoes na raiz: apenas arquivos e pastas desejados
+# ----------------------------------------------------
+!.gitignore
+!README*
+
+# Pastas permitidas
+!/codigo/
+!/imagens/
+
+# ----------------------------------------------------
+# Arquivos compilados, temporarios e de cache
+# ----------------------------------------------------
+# Binarios C++
+*.exe
+*.o
+*.obj
+teste_*
+run_benchmarks
+benchmark_bin
+codigo/**/teste_*
+codigo/**/run_benchmarks
+codigo/**/benchmark_bin
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Arquivos auxiliares de LaTeX
 *.aux
 *.log
 *.out
@@ -9,16 +42,8 @@
 *.synctex.gz
 *.fls
 *.fdb_latexmk
+*.bbl
+*.blg
 
-# C++ Compiled Binaries
-*.exe
-*.o
-*.obj
-teste_*
-run_benchmarks
-codigo/**/teste_*
-codigo/**/run_benchmarks
-
-# Python cache
-__pycache__/
-*.pyc
+# Temporarios / scratch
+scratch/

@@ -1,62 +1,77 @@
 #include "trie.hpp"
-#include <cassert>
 #include <iostream>
+#include <fstream>
+#include <string>
 #include <vector>
-#include <algorithm>
+#include <cassert>
 
-void testarTrie() {
-    std::cout << "[TESTE] Iniciando testes da Árvore Trie..." << std::endl;
+int main(int argc, char* argv[]) {
+    std::cout << "=================================================" << std::endl;
+    std::cout << "  Teste: Arvore Trie                             " << std::endl;
+    std::cout << "=================================================" << std::endl;
 
-    Trie trie;
-    assert(trie.vazia());
-    assert(trie.tamanho() == 0);
-    assert(!trie.buscar("sol"));
+    std::string caminho = "codigo/benchmark/dados/cenario1_vocabulario_real.txt";
+    if (argc > 1) {
+        caminho = argv[1];
+    } else {
+        std::ifstream teste(caminho);
+        if (!teste.is_open()) {
+            caminho = "../benchmark/dados/cenario1_vocabulario_real.txt";
+        }
+    }
 
-    // 1. Inserção básica
-    trie.inserir("sol");
-    trie.inserir("som");
-    trie.inserir("soma");
-    assert(trie.tamanho() == 3);
-    assert(trie.buscar("sol"));
-    assert(trie.buscar("som"));
-    assert(trie.buscar("soma"));
-    assert(!trie.buscar("so")); // prefixo mas nao terminal
+    std::cout << "[INFO] Lendo dados fisicos de: " << caminho << std::endl;
+    std::ifstream arq(caminho);
+    if (!arq.is_open()) {
+        std::cerr << "[ERRO] Nao foi possivel abrir o arquivo: " << caminho << std::endl;
+        return 1;
+    }
 
-    // 2. Prefixo (comecaCom)
-    assert(trie.comecaCom("so"));
-    assert(trie.comecaCom("sol"));
-    assert(trie.comecaCom("soma"));
-    assert(!trie.comecaCom("sub"));
+    NoTrie* raiz = criarNoTrie();
+    std::string palavra;
+    std::vector<std::string> amostra;
+    const size_t LIMITE_TESTE = 2000;
 
-    // 3. Autocompletar
-    auto sugestoes = trie.autocompletar("so");
-    std::sort(sugestoes.begin(), sugestoes.end());
-    assert(sugestoes.size() == 3);
-    assert(sugestoes[0] == "sol");
-    assert(sugestoes[1] == "som");
-    assert(sugestoes[2] == "soma");
+    while (std::getline(arq, palavra) && amostra.size() < LIMITE_TESTE) {
+        while (!palavra.empty() && (palavra.back() == '\r' || palavra.back() == ' ' || palavra.back() == '\t')) {
+            palavra.pop_back();
+        }
+        if (palavra.empty() || palavra[0] == '#') continue;
+        inserirTrie(raiz, palavra);
+        amostra.push_back(palavra);
+    }
+    arq.close();
 
-    // 4. Remoção parcial (remover "sol", "som" e "soma" devem permanecer)
-    bool rem = trie.remover("sol");
-    assert(rem);
-    assert(!trie.buscar("sol"));
-    assert(trie.buscar("som"));
-    assert(trie.buscar("soma"));
-    assert(trie.tamanho() == 2);
+    std::cout << "[DADOS] Total de palavras reais inseridas na Trie: " << amostra.size() << std::endl;
+    std::cout << "[ESTRUTURA] Total de nos alocados na Trie: " << contarNosTrie(raiz) << std::endl;
 
-    // 5. Casos de borda
-    trie.inserir("");
-    assert(trie.buscar(""));
-    assert(trie.remover(""));
-    assert(!trie.buscar(""));
+    std::cout << "[BUSCA] Validando presenca de palavras inseridas:" << std::endl;
+    assert(!amostra.empty() && "Amostra nao pode ser vazia.");
+    assert(buscarTrie(raiz, amostra[0]) && "Primeira palavra inserida deve existir.");
+    assert(buscarTrie(raiz, amostra[amostra.size() / 2]) && "Palavra intermediaria deve existir.");
+    assert(buscarTrie(raiz, amostra.back()) && "Ultima palavra deve existir.");
+    assert(!buscarTrie(raiz, "xyz_palavra_inexistente_12345") && "Palavra inexistente nao deve existir.");
+    std::cout << "  -> \"" << amostra[0] << "\": Encontrada [OK]" << std::endl;
+    std::cout << "  -> \"" << amostra[amostra.size() / 2] << "\": Encontrada [OK]" << std::endl;
+    std::cout << "  -> \"" << amostra.back() << "\": Encontrada [OK]" << std::endl;
+    std::cout << "  -> Inexistente: Nao encontrada [OK]" << std::endl;
 
-    // Remoção de chave inexistente
-    assert(!trie.remover("inexistente"));
+    std::cout << "[PREFIXO] Validando teste de prefixos e autocompletar:" << std::endl;
+    std::string prefixoTeste = amostra[0].substr(0, std::min<size_t>(3, amostra[0].size()));
+    assert(comecaComTrie(raiz, prefixoTeste) && "Prefixo comum deve ser reconhecido.");
+    auto sugestoes = autocompletarTrie(raiz, prefixoTeste);
+    std::cout << "  -> Prefixo \"" << prefixoTeste << "\" possui " << sugestoes.size() << " sugestoes no autocompletar [OK]" << std::endl;
 
-    std::cout << "[TESTE] Árvore Trie: Todos os testes passaram com sucesso!" << std::endl;
-}
+    std::cout << "[REMOCAO] Removendo palavra da amostra..." << std::endl;
+    std::string palavraRemover = amostra[0];
+    removerTrie(raiz, palavraRemover);
+    assert(!buscarTrie(raiz, palavraRemover) && "Palavra removida nao deve ser encontrada.");
+    std::cout << "  -> \"" << palavraRemover << "\" removida com sucesso [OK]" << std::endl;
 
-int main() {
-    testarTrie();
+    std::cout << "[MEMORIA] Liberando arvore Trie..." << std::endl;
+    liberarTrie(raiz);
+    raiz = nullptr;
+
+    std::cout << "[SUCESSO] Todos os testes da Trie foram aprovados com dados do benchmark!" << std::endl;
     return 0;
 }

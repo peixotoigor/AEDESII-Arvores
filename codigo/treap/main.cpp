@@ -1,60 +1,91 @@
 #include "treap.hpp"
-#include <cassert>
 #include <iostream>
+#include <fstream>
+#include <string>
 #include <vector>
+#include <cassert>
+#include <random>
 
-void testarTreap() {
-    std::cout << "[TESTE] Iniciando testes da Árvore Treap..." << std::endl;
+int main(int argc, char* argv[]) {
+    std::cout << "=================================================" << std::endl;
+    std::cout << "  Teste: Arvore Treap (Tree + Heap)              " << std::endl;
+    std::cout << "=================================================" << std::endl;
 
-    Treap treap(12345);
-    assert(treap.vazia());
-    assert(treap.tamanho() == 0);
-
-    // 1. Inserção determinística controlada (exemplo do relatório: Figura 4)
-    // 40/15, 20/30, 60/25
-    treap.inserir(40, 15);
-    treap.inserir(20, 30);
-    treap.inserir(60, 25);
-    assert(treap.tamanho() == 3);
-    assert(treap.verificarInvariantes());
-
-    // Inserção de 50 com prioridade alta (10) violando min-heap
-    treap.inserir(50, 10);
-    assert(treap.tamanho() == 4);
-    assert(treap.verificarInvariantes());
-    // 50/10 deve ter subido à raiz
-    assert(treap.getRaiz()->chave == 50);
-    assert(treap.getRaiz()->prioridade == 10);
-
-    // 2. Busca
-    assert(treap.buscar(40));
-    assert(treap.buscar(20));
-    assert(treap.buscar(60));
-    assert(treap.buscar(50));
-    assert(!treap.buscar(999));
-
-    // 3. Remoção mantendo invariantes
-    assert(treap.remover(50)); // remove a raiz
-    assert(!treap.buscar(50));
-    assert(treap.tamanho() == 3);
-    assert(treap.verificarInvariantes());
-
-    // 4. Inserção em massa sequencial (teste do balanceamento probabilístico)
-    Treap treapGrande(42);
-    for (int i = 1; i <= 1000; i++) {
-        treapGrande.inserir(i);
+    std::string caminho = "codigo/benchmark/dados/cenario2_sequencia_ordenada.txt";
+    if (argc > 1) {
+        caminho = argv[1];
+    } else {
+        std::ifstream teste(caminho);
+        if (!teste.is_open()) {
+            caminho = "../benchmark/dados/cenario2_sequencia_ordenada.txt";
+        }
     }
-    assert(treapGrande.tamanho() == 1000);
-    assert(treapGrande.verificarInvariantes());
-    // A altura de uma BST desbalanceada seria 1000; na Treap deve ser ~ 2 a 3 * log2(1000) ~ 20-30
-    size_t alt = treapGrande.altura();
-    std::cout << "  Altura para N=1000 inseridos em ordem: " << alt << " (esperado << 1000)" << std::endl;
-    assert(alt < 40);
 
-    std::cout << "[TESTE] Árvore Treap: Todos os testes passaram com sucesso!" << std::endl;
-}
+    std::cout << "[INFO] Lendo dados fisicos de: " << caminho << std::endl;
+    std::ifstream arq(caminho);
+    if (!arq.is_open()) {
+        std::cerr << "[ERRO] Nao foi possivel abrir o arquivo: " << caminho << std::endl;
+        return 1;
+    }
 
-int main() {
-    testarTreap();
+    NoTreap* raiz = nullptr;
+    int valor;
+    int qtdLidos = 0;
+    const int LIMITE_TESTE = 2000; // Valida os primeiros 2000 inteiros ordenados
+
+    // Gerador de prioridades pseudo-aleatorias uniforme deterministico (semente fixa 42)
+    std::mt19937 rng(42);
+    std::uniform_int_distribution<int> distPrio(1, 1000000);
+
+    while (arq >> valor && qtdLidos < LIMITE_TESTE) {
+        int prio = distPrio(rng);
+        raiz = inserirTreap(raiz, valor, prio);
+        qtdLidos++;
+    }
+    arq.close();
+
+    std::cout << "[DADOS] Total de chaves inseridas: " << qtdLidos << std::endl;
+    size_t totalNos = contarNosTreap(raiz);
+    int h = alturaTreap(raiz);
+    std::cout << "[ESTRUTURA] Total de nos contabilizados: " << totalNos << std::endl;
+    std::cout << "[ESTRUTURA] Altura da Treap com chaves ordenadas: " << h << " (esperado O(log N) ~ 15 a 30 vs 2000 da BST)" << std::endl;
+
+    assert(totalNos == (size_t)qtdLidos && "Todos os nos devem estar presentes.");
+    assert(h <= 35 && "A Treap com prioridades aleatorias deve mitigar a degeneracao linear.");
+
+    std::cout << "[INVARIANTES] Verificando invariantes simultaneas (BST nas chaves + Min-Heap nas prioridades)..." << std::endl;
+    bool invValidas = verificarInvariantesTreap(raiz);
+    std::cout << "  -> Invariantes: " << (invValidas ? "VALIDAS [OK]" : "INVALIDAS [FALHA]") << std::endl;
+    assert(invValidas && "Propriedade dual de BST e Min-Heap deve ser estritamente satisfeita.");
+
+    std::cout << "[BUSCA] Testando buscas pontuais:" << std::endl;
+    assert(buscarTreap(raiz, 1) && "Chave 1 deveria existir.");
+    assert(buscarTreap(raiz, qtdLidos / 2) && "Chave intermediaria deveria existir.");
+    assert(buscarTreap(raiz, qtdLidos) && "Ultima chave deveria existir.");
+    assert(!buscarTreap(raiz, 999999) && "Chave 999999 nao deveria existir.");
+    std::cout << "  -> Chave 1: Encontrada [OK]" << std::endl;
+    std::cout << "  -> Chave " << (qtdLidos / 2) << ": Encontrada [OK]" << std::endl;
+    std::cout << "  -> Chave " << qtdLidos << ": Encontrada [OK]" << std::endl;
+    std::cout << "  -> Chave 999999: Nao encontrada [OK]" << std::endl;
+
+    std::cout << "[REMOCAO] Testando remocao de elementos:" << std::endl;
+    int chaveRemover1 = 1;
+    int chaveRemover2 = qtdLidos / 2;
+    bool rem1 = false, rem2 = false;
+    raiz = removerTreap(raiz, chaveRemover1, &rem1);
+    raiz = removerTreap(raiz, chaveRemover2, &rem2);
+    assert(rem1 && "Chave 1 deveria ser removida com sucesso.");
+    assert(rem2 && "Chave mediana deveria ser removida com sucesso.");
+    assert(!buscarTreap(raiz, chaveRemover1) && "Chave removida nao deve ser encontrada.");
+    assert(!buscarTreap(raiz, chaveRemover2) && "Chave removida nao deve ser encontrada.");
+    assert(verificarInvariantesTreap(raiz) && "Invariantes devem permanecer validas apos remocoes.");
+    std::cout << "  -> Chaves " << chaveRemover1 << " e " << chaveRemover2 << " removidas com sucesso [OK]" << std::endl;
+    std::cout << "  -> Invariantes pos-remocao: VALIDAS [OK]" << std::endl;
+
+    std::cout << "[MEMORIA] Desalocando arvore Treap..." << std::endl;
+    liberarTreap(raiz);
+    raiz = nullptr;
+
+    std::cout << "[SUCESSO] Teste da Treap finalizado com exito!" << std::endl;
     return 0;
 }

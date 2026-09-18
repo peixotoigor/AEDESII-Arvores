@@ -1,58 +1,125 @@
 #include "kdtree.hpp"
-#include <cassert>
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <vector>
+#include <string>
+#include <cassert>
 
-void testarKDTree() {
-    std::cout << "[TESTE] Iniciando testes da Árvore KD-Tree..." << std::endl;
+int main(int argc, char* argv[]) {
+    std::cout << "=================================================" << std::endl;
+    std::cout << "  Teste: Arvore KD-Tree (k=2)                    " << std::endl;
+    std::cout << "=================================================" << std::endl;
 
-    KDTree kd(2);
-    assert(kd.vazia());
-    assert(kd.tamanho() == 0);
+    std::string caminho = "codigo/benchmark/dados/cenario4_pontos_kdtree.txt";
+    if (argc > 1) {
+        caminho = argv[1];
+    } else {
+        std::ifstream teste1(caminho);
+        if (!teste1.is_open()) {
+            caminho = "../benchmark/dados/cenario4_pontos_kdtree.txt";
+            std::ifstream teste2(caminho);
+            if (!teste2.is_open()) {
+                caminho = "dados_teste_kdtree.txt";
+            }
+        }
+    }
 
-    // 1. Inserção incremental dos pontos da Figura 5 do relatório
-    // A(5, 5.7), B(2.3, 3.0), C(7.4, 4.5), D(3.6, 1.4)
-    kd.inserir({5.0, 5.7});
-    kd.inserir({2.3, 3.0});
-    kd.inserir({7.4, 4.5});
-    kd.inserir({3.6, 1.4});
-    assert(kd.tamanho() == 4);
+    std::cout << "[INFO] Lendo dados fisicos de: " << caminho << std::endl;
+    std::ifstream arq(caminho);
+    if (!arq.is_open()) {
+        std::cerr << "[ERRO CRITICO] Nao foi possivel abrir o arquivo: " << caminho << std::endl;
+        return 1;
+    }
 
-    // Inserção de E(7.5, 2.0)
-    kd.inserir({7.5, 2.0});
-    assert(kd.tamanho() == 5);
+    std::string linha, secaoAtual = "";
+    NoKD* raiz = nullptr;
+    std::vector<PontoKD> pontosBalanceados;
+    int qtdInseridos = 0;
 
-    // 2. Busca exata
-    assert(kd.buscarExato({5.0, 5.7}));
-    assert(kd.buscarExato({7.5, 2.0}));
-    assert(!kd.buscarExato({0.0, 0.0}));
+    while (std::getline(arq, linha)) {
+        while (!linha.empty() && (linha.back() == '\r' || linha.back() == ' ' || linha.back() == '\t')) {
+            linha.pop_back();
+        }
+        if (linha.empty() || linha[0] == '#') continue;
 
-    // 3. Busca por intervalo retangular
-    // Intervalo x in [2.0, 6.0], y in [1.0, 6.0] -> Deve conter B, D, A
-    auto pontosRegiao = kd.buscaIntervalo({2.0, 1.0}, {6.0, 6.0});
-    assert(pontosRegiao.size() == 3);
+        if (linha[0] == '[' && linha.back() == ']') {
+            secaoAtual = linha;
+            continue;
+        }
 
-    // 4. Busca de vizinho mais próximo (k-NN)
-    size_t visitados = 0;
-    auto maisProximo = kd.vizinhoMaisProximo({7.4, 4.4}, &visitados);
-    // Deve ser o ponto C (7.4, 4.5)
-    assert(maisProximo[0] == 7.4 && maisProximo[1] == 4.5);
-    std::cout << "  Vizinho mais próximo de (7.4, 4.4): (" << maisProximo[0] << ", " << maisProximo[1]
-              << "), nós visitados: " << visitados << " de " << kd.tamanho() << std::endl;
+        size_t posHash = linha.find('#');
+        if (posHash != std::string::npos) {
+            linha = linha.substr(0, posHash);
+        }
 
-    // 5. Construção balanceada estática
-    std::vector<KDTree::Ponto> pontos = {
-        {2.0, 3.0}, {5.0, 4.0}, {9.0, 6.0}, {4.0, 7.0}, {8.0, 1.0}, {7.0, 2.0}
-    };
-    KDTree kdBal(2);
-    kdBal.construirBalanceada(pontos);
-    assert(kdBal.tamanho() == 6);
-    assert(kdBal.altura() <= 4);
+        std::istringstream iss(linha);
 
-    std::cout << "[TESTE] Árvore KD-Tree: Todos os testes passaram com sucesso!" << std::endl;
-}
+        if (secaoAtual == "[PONTOS_INICIAIS_2D]" || secaoAtual == "[PONTO_CONFINADO]") {
+            double x, y;
+            if (iss >> x >> y) {
+                raiz = inserirKD(raiz, {x, y});
+                qtdInseridos++;
+            }
+        } else if (secaoAtual == "[BUSCAR_EXATO]") {
+            double x, y;
+            if (iss >> x >> y) {
+                bool achou = buscarExatoKD(raiz, {x, y});
+                std::cout << "  [BUSCA EXATA] Ponto (" << x << ", " << y << ") -> " << (achou ? "Encontrado [OK]" : "Nao encontrado [OK]") << std::endl;
+                if (x == 0.0 && y == 0.0) {
+                    assert(!achou && "Ponto (0,0) nao deveria existir.");
+                } else {
+                    assert(achou && "Ponto inserido deveria ser encontrado.");
+                }
+            }
+        } else if (secaoAtual == "[RANGE_QUERY]") {
+            double xmin, ymin, xmax, ymax;
+            if (iss >> xmin >> ymin >> xmax >> ymax) {
+                std::vector<PontoKD> regiao;
+                buscaIntervaloKD(raiz, {xmin, ymin}, {xmax, ymax}, 0, regiao);
+                std::cout << "  [RANGE QUERY] Janela [" << xmin << ", " << xmax << "] x [" 
+                          << ymin << ", " << ymax << "] -> " << regiao.size() << " pontos dentro da regiao." << std::endl;
+                for (const auto& p : regiao) {
+                    std::cout << "    -> Ponto no retangulo: (" << p[0] << ", " << p[1] << ")" << std::endl;
+                }
+                assert(regiao.size() == 3 && "Range query retangular deveria conter exatamente 3 pontos.");
+            }
+        } else if (secaoAtual == "[1NN_CONSULTA]") {
+            double qx, qy;
+            if (iss >> qx >> qy) {
+                size_t visitados = 0;
+                PontoKD consulta = {qx, qy};
+                PontoKD maisProximo = vizinhoMaisProximoKD(raiz, consulta, &visitados);
+                std::cout << "  [1-NN] Consulta Q=(" << qx << ", " << qy << ") -> Vizinho encontrado: (" 
+                          << maisProximo[0] << ", " << maisProximo[1] << ") com " << visitados << " nos visitados." << std::endl;
+                assert(maisProximo[0] == 7.4 && maisProximo[1] == 4.5 && "Vizinho mais proximo esperado e C(7.4, 4.5).");
+            }
+        } else if (secaoAtual == "[PONTOS_CONSTRUCAO_BALANCEADA]") {
+            double x, y;
+            if (iss >> x >> y) {
+                pontosBalanceados.push_back({x, y});
+            }
+        }
+    }
+    arq.close();
 
-int main() {
-    testarKDTree();
+    std::cout << "[DADOS] Total de pontos dinamicos inseridos: " << qtdInseridos << std::endl;
+    assert(contarNosKD(raiz) == (size_t)qtdInseridos);
+
+    std::cout << "[ESTATICA] Testando construcao estatica balanceada via mediana..." << std::endl;
+    assert(pontosBalanceados.size() == 6);
+    NoKD* kdBal = construirBalanceadaKD(pontosBalanceados, 0, pontosBalanceados.size(), 0);
+    assert(contarNosKD(kdBal) == 6);
+    int altBal = alturaKD(kdBal);
+    std::cout << "  -> Total de pontos: " << pontosBalanceados.size() << " | Altura: " << altBal << " (<= 4) [OK]" << std::endl;
+    assert(altBal <= 4);
+
+    std::cout << "[MEMORIA] Desalocando arvores KD-Tree..." << std::endl;
+    liberarKD(raiz);
+    raiz = nullptr;
+    liberarKD(kdBal);
+    kdBal = nullptr;
+
+    std::cout << "[SUCESSO] Teste da KD-Tree finalizado com exito!" << std::endl;
     return 0;
 }
